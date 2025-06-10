@@ -14,11 +14,25 @@ export const useGeoLocation = (options = {}) => {
   }
 
   const handleError = (err) => {
-    setError(err.message)
+    console.log(err)
+    let message = ""
+    switch (err.code){
+      case 1:
+        message = "Permission denied. Please allow location access."
+        break
+      case 2:
+        message = "Position unavailable. Please check your device's location settings."
+        break
+      case 3:
+        message = "Timeout. The request took too long to respond."
+        break
+      default:
+        message = "An unknown error occurred."
+    }
+    setError(message)
   }
 
   useEffect(() => {
-    console.log('useGeoLocation useEffect called')
     const { geolocation } = navigator
 
     if (!geolocation) {
@@ -29,5 +43,5 @@ export const useGeoLocation = (options = {}) => {
     geolocation.getCurrentPosition(handleSuccess, handleError, options)
   }, [options])
 
-  return { location, error }
+  return [location, error]
 }

@@ -31,7 +31,7 @@ function App() {
     mapInstance.addControl(control, kakao.maps.ControlPosition.BOTTOMRIGHT);
   }, []);
 
-  const { location, error } = useGeoLocation(geolocationOptions);
+  const [ location, error ] = useGeoLocation(geolocationOptions);
 
   function searchPlaces() {
     fetch(`https://dapi.kakao.com/v2/local/search/keyword?query=${place}`, {
@@ -41,23 +41,22 @@ function App() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setSearchResults(data.documents);
       });
   }
 
   useEffect(() => {
-    if (!location) return;
+    if (!location || !map) return;
     const position = new kakao.maps.LatLng(
       location.latitude,
       location.longitude
     );
     map.panTo(position);
-    console.log('panTo')
-  }, [location]);
+  }, [location, map]);
 
   return (
     <div className="App">
+      {error && <div>에러: {error}</div>}
       {!error && location && (
         <div>
           <p>
